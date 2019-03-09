@@ -3,8 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:podcatcher/src/widgets/podcast_provider.dart';
 import 'package:validators/validators.dart';
 import 'dart:io' show SocketException;
-import 'package:podcatcher/resources/podcast_repository.dart'
-    show DuplicateException;
+
 
 class AddPodcast extends StatefulWidget {
   const AddPodcast({
@@ -92,18 +91,19 @@ class AddPodcastFormState extends State<AddPodcastForm> {
                         PodcastBloc pbloc = PodcastBlocProvider.of(context);
                         try {
                           await pbloc.fetchFromUrl(this._url);
+                          Navigator.of(context)
+                              .popUntil((route) => route.isFirst);
                           Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text('${this._url} was processed')));
                         } on SocketException {
                           Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text('No feed found on ${this._url}')));
-                        } on StateError {
+                        }
+                         on StateError {
                           Scaffold.of(context).showSnackBar(
-                              SnackBar(content: Text('Could not parse feed')));
-                        } on DuplicateException {
-                          Scaffold.of(context).showSnackBar(
-                              SnackBar(content: Text('Allready subscribed')));
-                        } catch (e) {
+                              SnackBar(content: Text('This type of feed is not supported')));
+                        }
+                         catch (e) {
                           print(e);
                           Scaffold.of(context).showSnackBar(SnackBar(
                               content: Text('An unknown error occured: $e')));
@@ -120,9 +120,6 @@ class AddPodcastFormState extends State<AddPodcastForm> {
                       setState(() {
                         this._txt.text = data.text;
                       });
-                      Scaffold.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              '${this._txt.text} Should paste text from clipboard')));
                     },
                     child: Text('Paste from clipboard'),
                   ),

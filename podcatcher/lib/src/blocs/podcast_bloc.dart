@@ -30,4 +30,8 @@ class PodcastBloc {
   Future clearCache() async {
     await PodcastRepository().clearCache();
   }
+
+  Future delete(int id) async {
+    await PodcastRepository().delete(id);
+  }
 }

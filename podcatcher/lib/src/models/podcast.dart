@@ -25,7 +25,6 @@ class Podcast {
   )
   ''';
 
-
   Podcast(
       {this.id,
       this.title,
@@ -63,21 +62,17 @@ class Podcast {
     final channelNode = document.findAllElements('channel').first;
 
     this.title = channelNode.findElements('title').first.text;
-    this.author = channelNode.findElements('itunes:author').first.text;
-    this.subtitle = (channelNode.findElements('itunes:subtitle').isNotEmpty)
-        ? channelNode.findElements('itunes:subtitle').first.text
-        : '';
-    this.feedLink = channelNode.findElements('link').first.text;
-    this.imageOnline =
-        channelNode.findElements('image').first.findElements('url').first.text;
+    this.author = _findAuthor(channelNode);
+    this.subtitle = _findSubtitle(channelNode);
+    this.feedLink = _findLink(channelNode);
+    this.imageOnline = _findImage(channelNode);
+
     this.episodes = channelNode
         .findElements('item')
         .map((item) => Episode.fromRss(item))
         .toList();
     this.explicit =
         channelNode.findElements('itunes:explicit').first.text != 'no';
-
-    print('${this.episodes.length} Episodes in ${this.title}');
   }
 
   Map<String, dynamic> toDb() {
@@ -91,5 +86,71 @@ class Podcast {
       'imageoffline': this.imageOffline,
       'explicit': this.explicit ? 1 : 0,
     };
+  }
+
+  @override
+  String toString() {
+    return '''{
+              'id': ${this.id},
+              'title': ${this.title},
+              'author': ${this.author},
+              'subtitle': ${this.subtitle},
+              'feedLink': ${this.feedLink},
+              'imageOnline': ${this.imageOnline},
+              'imageoffline': ${this.imageOffline},
+              'explicit': ${this.explicit},
+              ''';
+  }
+
+  String _findLink(xml.XmlElement channelNode) {
+    try {
+      return channelNode.findElements('itunes:new-feed-url').first.text;
+    } catch (e) {
+      try {
+        return channelNode.findElements('atom:link').first.getAttribute('href');
+      } catch (e) {
+        try {
+          return channelNode
+              .findElements('atom10:link')
+              .firstWhere((x) => x.getAttribute('rel') == 'self')
+              .getAttribute('href');
+        } catch (e) {
+          return null;
+        }
+      }
+    }
+  }
+
+  String _findImage(xml.XmlElement channelNode) {
+    try {
+      return channelNode
+          .findElements('image')
+          .first
+          .findElements('url')
+          .first
+          .text;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  String _findSubtitle(xml.XmlElement channelNode) {
+    try {
+      return channelNode.findElements('itunes:subtitle').first.text;
+    } catch (e) {
+      try {
+        return channelNode.findElements('itunes:summary').first.text;
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+
+  String _findAuthor(xml.XmlElement channelNode) {
+    try {
+      return channelNode.findElements('itunes:author').first.text;
+    } catch (e) {
+      return null;
+    }
   }
 }

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:podcatcher/src/screens/add_podcast.dart';
-import 'package:podcatcher/src/widgets/podcast_provider.dart';
-import 'package:podcatcher/src/widgets/podcast_refresh.dart';
+import 'package:podcatcher/src/widgets/podcasts_list.dart';
 
 class Home extends StatelessWidget {
   Home({Key key, this.title}) : super(key: key);
@@ -9,8 +8,7 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    PodcastBloc pbloc = PodcastBlocProvider.of(context);
-    pbloc.fetch();
+    
     // pbloc.fetchFromUrl('https://hasenbalg.org/lattnyheter2.xml');
     // pbloc.fetchFromUrl('https://hasenbalg.org/devonfire.xml');
     // pbloc.fetchFromUrl(
@@ -19,26 +17,7 @@ class Home extends StatelessWidget {
       appBar: AppBar(
         title: Text(title),
       ),
-      body: PodcastRefresh(
-        child: StreamBuilder(
-          stream: pbloc.outPodcasts,
-          builder:
-              (BuildContext context, AsyncSnapshot<List<Podcast>> snapshot) {
-            if (snapshot.hasData) {
-              return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  Podcast p = snapshot.data[index];
-                  return buildPodcastListTile(p);
-                },
-              );
-            }
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          },
-        ),
-      ),
+      body: PodcastsList(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.push(
@@ -52,15 +31,5 @@ class Home extends StatelessWidget {
     );
   }
 
-  ListTile buildPodcastListTile(Podcast p) {
-    return ListTile(
-      leading: Image.network(
-        p.imageOnline,
-        fit: BoxFit.cover,
-        height: 70,
-      ),
-      title: Text(p.title),
-      subtitle: Text(p.subtitle),
-    );
-  }
+ 
 }

@@ -13,6 +13,7 @@ class PodcastRefresh extends StatelessWidget {
       child: child,
       onRefresh: () async {
         // await bloc.clearCache();
+        await bloc.updateAll();
         bloc.fetch();
       },
     );

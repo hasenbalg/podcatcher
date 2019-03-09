@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:podcatcher/mixins/download_file.dart';
 import 'package:podcatcher/resources/database_helper.dart';
 import 'package:podcatcher/src/models/podcast.dart';
 export 'package:podcatcher/src/models/podcast.dart';
 
-class PodcastRepository {
+class PodcastRepository with DownloadFile {
   String _tableName = 'Podcasts';
 
   Client client = Client();
@@ -13,19 +14,21 @@ class PodcastRepository {
   Future fetchFromUrl(String url) async {
     var response = await client.get(url);
     Podcast newPodcast = Podcast.fromRss(utf8.decode(response.bodyBytes));
+    newPodcast.feedLink ??= url;
 
+    newPodcast.imageOffline = await downloadAndGetPath(newPodcast.imageOnline);
+    
     List<Podcast> allPodcasts = await fetchFromDb();
-    allPodcasts.forEach((oldPodcast) {
+    allPodcasts.forEach((oldPodcast) async {
       if (oldPodcast.feedLink == newPodcast.feedLink) {
-        throw DuplicateException('Allready subscribed.');
+        newPodcast.id = oldPodcast.id;
+        await DatabaseHelper.instance.update(newPodcast.toDb(), _tableName);
       }
     });
 
     await DatabaseHelper.instance.insert(newPodcast.toDb(), _tableName);
-    print('${newPodcast.title} in database');
+    print('$newPodcast in database');
   }
-
- 
 
   Future<List<Podcast>> fetchFromDb() async {
     var result = await DatabaseHelper.instance.queryAllRows(_tableName);
@@ -37,9 +40,7 @@ class PodcastRepository {
   }
 
   void updateSingle(Podcast p) async {
-    Podcast newP = await fetchFromUrl(p.feedLink);
-    newP.id = p.id;
-    await DatabaseHelper.instance.update(newP.toDb(), _tableName);
+    fetchFromUrl(p.feedLink);
   }
 
   Future updateAll() async {
@@ -52,9 +53,8 @@ class PodcastRepository {
       updateSingle(p);
     });
   }
-}
 
-class DuplicateException implements Exception {
-  String cause;
-  DuplicateException(this.cause);
+  Future delete(int id) async {
+    await DatabaseHelper.instance.delete(id, _tableName);
+  }
 }

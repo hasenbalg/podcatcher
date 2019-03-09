@@ -13,6 +13,9 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.lightGreen,
         ),
         home: Home(title: 'Podcatcher'),
+        routes: <String, WidgetBuilder>{
+          '/home': (BuildContext context) => Home(title: 'Podcatcher'),
+        },
       ),
     );
   }

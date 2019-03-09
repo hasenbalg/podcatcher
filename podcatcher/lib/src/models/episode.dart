@@ -103,8 +103,7 @@ class Episode {
         ? item.findElements('author').first.text
         : '';
     this.description = item.findElements('description').first.text;
-    this.duration =
-        int.parse(item.findElements('enclosure').first.getAttribute('length'));
+    this.duration = _findDuration(item);
     this.audioOnline =
         item.findElements('enclosure').first.getAttribute('audioOnline');
     this.imageOnline = (item.findElements('img').isNotEmpty)
@@ -114,5 +113,14 @@ class Episode {
 
   _parseDate(String format, String date) {
     return new DateFormat(format).parse(date);
+  }
+
+  int _findDuration(xml.XmlElement item) {
+    try {
+      return int.parse(
+          item.findElements('enclosure').first.getAttribute('length'));
+    } catch (e) {
+      return null;
+    }
   }
 }
