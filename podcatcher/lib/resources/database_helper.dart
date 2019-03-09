@@ -7,7 +7,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
 
 class DatabaseHelper {
-  
+  // inspired by https://gist.githubusercontent.com/suragch/629459872188b0834a12dfe78fd06dac/raw/c056a0ee6ffc2263414bd112498ae07d4df2fa51/database_helper.dart
   static final _databaseName = "Podcatcher.db";
   static final _databaseVersion = 1;
 
@@ -58,5 +58,10 @@ class DatabaseHelper {
   Future<int> delete(int id, String table) async {
     Database db = await instance.database;
     return await db.delete(table, where: 'id = ?', whereArgs: [id]);
+  }
+
+  Future<int> clear( String table) async {
+    Database db = await instance.database;
+    return await db.delete(table);
   }
 }

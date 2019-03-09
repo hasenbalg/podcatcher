@@ -14,12 +14,20 @@ class PodcastBloc {
     _podcasts.sink.add(podcasts);
   }
 
-  Future fetchFromUrl(String url) async {
-    PodcastRepository().fetchFromUrl(url);
+  fetchFromUrl(String url) async {
+    await PodcastRepository().fetchFromUrl(url);
+  }
+
+  Future updateAll() async {
+    PodcastRepository().updateAll();
     fetch();
   }
 
   void dispose() {
     _podcasts.close();
+  }
+
+  Future clearCache() async {
+    await PodcastRepository().clearCache();
   }
 }

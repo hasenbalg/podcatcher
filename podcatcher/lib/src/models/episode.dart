@@ -18,6 +18,7 @@ class Episode {
   static String createTable = '''
   CREATE TABLE Episodes(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    podcast_id INT NOT NULL,
     title TEXT NOT NULL,
     author TEXT,
     description TEXT,
@@ -28,7 +29,8 @@ class Episode {
     isDownloaded INT NOT NULL DEFAULT 0,
     imageOnline TEXT,
     imageOffline TEXT,
-    timePlayed INT NOT NULL DEFAULT 0
+    timePlayed INT NOT NULL DEFAULT 0,
+    FOREIGN KEY(podcast_id) REFERENCES Podcasts(id)
   )
   ''';
 

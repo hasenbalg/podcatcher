@@ -34,7 +34,6 @@ class Podcast {
       this.feedLink,
       this.imageOnline,
       this.imageOffline,
-      this.episodes,
       this.explicit});
 
   Podcast.fromJson(parsedJson) {
@@ -45,7 +44,6 @@ class Podcast {
     this.feedLink = parsedJson['link'];
     this.imageOnline = parsedJson['imageOnline'];
     this.imageOffline = parsedJson['imageOffline'];
-    this.episodes = (parsedJson['episodes'] as List<Map<String, dynamic>>).map((e)=>Episode.fromJson(e)).toList();
     this.explicit = parsedJson['explicit'];
   }
 
@@ -54,10 +52,9 @@ class Podcast {
     this.title = dbMap['title'];
     this.author = dbMap['author'];
     this.subtitle = dbMap['subtitle'];
-    this.feedLink = dbMap['link'];
+    this.feedLink = dbMap['feedLink'];
     this.imageOnline = dbMap['imageOnline'];
     this.imageOffline = dbMap['imageOffline'];
-    // this.episodes = dbMap['episodes'];
     this.explicit = dbMap['explicit'] == 1;
   }
 
@@ -92,7 +89,6 @@ class Podcast {
       'feedLink': this.feedLink,
       'imageOnline': this.imageOnline,
       'imageoffline': this.imageOffline,
-      // 'episodes': this.episodes,
       'explicit': this.explicit ? 1 : 0,
     };
   }
