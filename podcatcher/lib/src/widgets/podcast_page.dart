@@ -1,6 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
+import 'package:podcatcher/src/widgets/delete_podcast_dialog.dart';
 import 'package:podcatcher/src/widgets/img_or_placeholder.dart';
 import 'package:podcatcher/src/widgets/podcast_provider.dart';
 
@@ -43,7 +42,10 @@ class PodcastPage extends StatelessWidget {
       children: <Widget>[
         Row(
           children: <Widget>[
-            ImgOrPlaceholder(path: podcast.imageOffline),
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: ImgOrPlaceholder(path: podcast.imageOffline),
+            ),
             Expanded(
               child: Column(
                 children: <Widget>[
@@ -61,8 +63,6 @@ class PodcastPage extends StatelessWidget {
               iconSize: 48.0,
               onPressed: () {
                 _deleteDialog(context, podcast);
-
-                // Navigator.pop(context);
               },
             ),
           ],
@@ -76,37 +76,7 @@ class PodcastPage extends StatelessWidget {
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('Really delete ${podcast.title}?'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('Are your sure?'),
-                Text('This is not reversable.'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('Ok'),
-              onPressed: () {
-                PodcastBloc pbloc = PodcastBlocProvider.of(context);
-                //delete file
-                var file = File(podcast.imageOffline);
-                file.deleteSync();
-                
-                pbloc.delete(podcast.id);
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              },
-            ),
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+        return DeletePodcastDialog(podcast: podcast);
       },
     );
   }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:podcatcher/resources/podcast_repository.dart';
 import 'package:podcatcher/src/models/podcast.dart';
 
@@ -31,7 +32,10 @@ class PodcastBloc {
     await PodcastRepository().clearCache();
   }
 
-  Future delete(int id) async {
-    await PodcastRepository().delete(id);
+  Future delete(Podcast podcast) async {
+    //delete file
+    var file = File(podcast.imageOffline);
+    file.deleteSync();
+    await PodcastRepository().delete(podcast.id);
   }
 }
