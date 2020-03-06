@@ -20,13 +20,15 @@ class EpisodesList extends StatelessWidget {
             snapshot.data.length > 0 &&
             !snapshot.hasError) {
           return ListView.builder(
+            primary: false,
+            shrinkWrap: true,
             itemCount: snapshot.data.length,
             itemBuilder: (BuildContext context, int index) {
               Episode e = snapshot.data[index];
               return buildEpisodeListTile(context, e);
             },
           );
-        } else if (snapshot.data.length == 0) {
+        } else if (snapshot.data?.length == 0) {
           return Center(
             child: Text('No Episodes found'),
           );

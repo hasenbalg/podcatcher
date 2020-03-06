@@ -3,6 +3,7 @@ import 'package:xml/xml.dart' as xml;
 
 class Episode {
   int id;
+  int podcastId;
   String title;
   String author;
   String description;
@@ -18,7 +19,7 @@ class Episode {
   static String createTable = '''
   CREATE TABLE Episodes(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    podcast_id INT NOT NULL,
+    podcastId INT NOT NULL,
     title TEXT NOT NULL,
     author TEXT,
     description TEXT,
@@ -26,16 +27,17 @@ class Episode {
     audioOffline TEXT,
     pubDate INT NOT NULL,
     duration INT NOT NULL,
-    isDownloaded INT NOT NULL DEFAULT 0,
+    isDownloaded INT DEFAULT 0,
     imageOnline TEXT,
     imageOffline TEXT,
-    timePlayed INT NOT NULL DEFAULT 0,
-    FOREIGN KEY(podcast_id) REFERENCES Podcasts(id)
+    timePlayed INT DEFAULT 0,
+    FOREIGN KEY(podcastId) REFERENCES Podcasts(id)
   )
   ''';
 
   Episode(
       {this.id,
+      this.podcastId,
       this.title,
       this.author,
       this.description,
@@ -50,6 +52,7 @@ class Episode {
 
   Episode.fromJson(parsedJson) {
     this.id = parsedJson['id'] as int;
+    this.podcastId = parsedJson['podcastId'] as int;
     this.author = parsedJson['author'];
     this.description = parsedJson['description'];
     this.title = parsedJson['title'];
@@ -65,6 +68,7 @@ class Episode {
 
   Episode.fromDb(Map<String, dynamic> dbMap) {
     this.id = dbMap['id'] as int;
+    this.podcastId = dbMap['podcastId'] as int;
     this.author = dbMap['author'];
     this.description = dbMap['description'];
     this.title = dbMap['title'];
@@ -81,6 +85,7 @@ class Episode {
   Map<String, dynamic> toDb() {
     return {
       'id': this.id,
+      'podcastId': this.podcastId,
       'author': this.author,
       'description': this.description,
       'title': this.title,
@@ -105,7 +110,7 @@ class Episode {
     this.description = item.findElements('description').first.text;
     this.duration = _findDuration(item);
     this.audioOnline =
-        item.findElements('enclosure').first.getAttribute('audioOnline');
+        item.findElements('enclosure').first.getAttribute('url');
     this.imageOnline = (item.findElements('img').isNotEmpty)
         ? item.findElements('img').first.getAttribute('src')
         : null;
@@ -122,5 +127,24 @@ class Episode {
     } catch (e) {
       return null;
     }
+  }
+
+    @override
+  String toString() {
+    return '''{
+              'id': ${this.id},
+              'podcastId': ${this.podcastId},
+              'title': ${this.title},
+              'author': ${this.author},
+              'discription': ${this.description},
+              'audioOnline': ${this.audioOnline},
+              'audioOffline': ${this.audioOffline},
+              'pubDate': ${this.pubDate},
+              'duration': ${this.duration},
+              'isDownloaded': ${this.isDownloaded},
+              'imageOnline': ${this.imageOnline},
+              'imageOffline': ${this.imageOffline},
+              'timePlayed': ${this.timePlayed},
+              ''';
   }
 }

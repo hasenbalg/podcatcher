@@ -9,7 +9,7 @@ class PodcastsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Bloc pbloc = BlocProvider.of(context);
-    pbloc.fetch();
+    pbloc.fetchPodcasts();
     return PodcastRefresh(
       child: StreamBuilder(
         stream: pbloc.outPodcasts,
@@ -24,7 +24,7 @@ class PodcastsList extends StatelessWidget {
                 return buildPodcastListTile(context, p);
               },
             );
-          }else if(snapshot.data.length == 0){
+          }else if(snapshot.data?.length == 0){
             return Center(child: Text('No Podcasts found'),);
           }
           return Center(

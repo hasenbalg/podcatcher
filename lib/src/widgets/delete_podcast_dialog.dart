@@ -22,10 +22,10 @@ class DeletePodcastDialog extends StatelessWidget {
       actions: <Widget>[
         FlatButton(
           child: Text('Ok'),
-          onPressed: () {
-            Bloc pbloc = BlocProvider.of(context);
+          onPressed: () async {
+            Bloc bloc = BlocProvider.of(context);
 
-            pbloc.delete(podcast);
+            bloc.deletePodcast(podcast);
             Navigator.of(context).popUntil((route) => route.isFirst);
           },
         ),

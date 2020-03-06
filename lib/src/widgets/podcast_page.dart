@@ -13,7 +13,7 @@ class PodcastPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Bloc pbloc = BlocProvider.of(context);
-    pbloc.fetch();
+    pbloc.fetchPodcasts();
 
     return StreamBuilder(
       stream: pbloc.outPodcasts,
@@ -26,10 +26,12 @@ class PodcastPage extends StatelessWidget {
             appBar: AppBar(
               title: Text(podcast.title),
             ),
-            body: Column(
-              children: <Widget>[
-                buildInfoSection(context, podcast),
-              ],
+            body: SingleChildScrollView(
+              child: Column(
+                children: <Widget>[
+                  buildInfoSection(context, podcast),
+                ],
+              ),
             ),
           );
         }

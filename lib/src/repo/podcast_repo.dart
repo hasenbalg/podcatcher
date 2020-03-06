@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart';
 import 'package:podcatcher/src/model/podcast.dart';
+import 'package:podcatcher/src/repo/episode_repo.dart';
 
 import 'database_helper.dart';
 import 'download_file.dart';
@@ -17,17 +18,31 @@ class PodcastRepo with DownloadFile {
     newPodcast.feedLink ??= url;
 
     newPodcast.imageOffline = await downloadAndGetPath(newPodcast.imageOnline);
-    
+
     List<Podcast> allPodcasts = await fetchFromDb();
+
+    //  Podcast oldPodcast =
+    //       allPodcasts.firstWhere((p) => p.feedLink == newPodcast.feedLink);
+    //       print(oldPodcast);
+    //   if (oldPodcast != null) {
+    //     newPodcast.id = oldPodcast.id;
+    //     await DatabaseHelper.instance.update(newPodcast.toDb(), _tableName);
+    //   } else {
+    //     await DatabaseHelper.instance.insert(newPodcast.toDb(), _tableName);
+    //   }
+
     allPodcasts.forEach((oldPodcast) async {
       if (oldPodcast.feedLink == newPodcast.feedLink) {
         newPodcast.id = oldPodcast.id;
         await DatabaseHelper.instance.update(newPodcast.toDb(), _tableName);
       }
     });
-
-    await DatabaseHelper.instance.insert(newPodcast.toDb(), _tableName);
+    if (newPodcast.id == null) {
+      newPodcast.id =
+          await DatabaseHelper.instance.insert(newPodcast.toDb(), _tableName);
+    }
     print('$newPodcast in database');
+    await EpisodeRepo().updateEpisodesOfPodcast(newPodcast);
   }
 
   Future<List<Podcast>> fetchFromDb() async {

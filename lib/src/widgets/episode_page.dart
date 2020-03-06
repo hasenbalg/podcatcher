@@ -11,7 +11,7 @@ class EpisodePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Bloc bloc = BlocProvider.of(context);
-    bloc.fetch();
+    bloc.fetchEpisode(id);
     return StreamBuilder(
       stream: bloc.outEpisodes,
       builder: (BuildContext context, AsyncSnapshot<List<Episode>> snapshot) {
@@ -19,7 +19,7 @@ class EpisodePage extends StatelessWidget {
             snapshot.data.length > 0 &&
             !snapshot.hasError) {
           return _someThing2Show(snapshot.data);
-        } else if (snapshot.data.length == 0) {
+        } else if (snapshot.data?.length == 0) {
           return Center(
             child: Text('No Episodes found'),
           );
