@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:podcatcher/src/widgets/episode_page.dart';
 import 'package:podcatcher/src/widgets/img_or_placeholder.dart';
 import 'package:podcatcher/src/widgets/podcast_provider.dart';
@@ -6,7 +7,9 @@ import 'package:podcatcher/src/widgets/podcast_provider.dart';
 import '../model/episode.dart';
 
 class EpisodesList extends StatelessWidget {
-  int podcastId;
+  final int podcastId;
+  final DateFormat dateFormat = DateFormat.yMEd();
+  final DateFormat timeFormat = DateFormat.Hm();
 
   EpisodesList({this.podcastId});
   @override
@@ -20,19 +23,18 @@ class EpisodesList extends StatelessWidget {
             snapshot.data.length > 0 &&
             !snapshot.hasError) {
           return ListView.builder(
-            primary: false,
-            shrinkWrap: true,
             itemCount: snapshot.data.length,
             itemBuilder: (BuildContext context, int index) {
               Episode e = snapshot.data[index];
               return buildEpisodeListTile(context, e);
             },
           );
-        } else if (snapshot.data?.length == 0) {
-          return Center(
-            child: Text('No Episodes found'),
-          );
-        }
+        } 
+        // else if (snapshot.hasData && snapshot.data.isEmpty) {
+        //   return Center(
+        //     child: Text('No Episodes found'),
+        //   );
+        // }
         return Center(
           child: CircularProgressIndicator(),
         );
@@ -44,13 +46,13 @@ class EpisodesList extends StatelessWidget {
     return ListTile(
       leading: ImgOrPlaceholder(path: e.imageOffline),
       title: Text(e.title),
-      // subtitle: Text(e.subtitle),
+      subtitle: Text('${dateFormat.format(e.pubDate)} ${timeFormat.format(e.pubDate)}'),
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => EpisodePage(
-              id: e.id,
+              episode: e,
             ),
           ),
         );

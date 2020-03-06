@@ -45,7 +45,7 @@ class PodcastsList extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => PodcastPage(
-                  id: podcast.id,
+                  podcast: podcast,
                 ),
           ),
         );

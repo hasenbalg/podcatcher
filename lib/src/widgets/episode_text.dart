@@ -4,8 +4,8 @@ import 'package:intl/intl.dart';
 import '../model/episode.dart';
 
 class EpisodeText extends StatelessWidget {
-  Episode e;
-  DateFormat dateFormat = DateFormat.yMMMMEEEEd();
+  final Episode e;
+  final DateFormat dateFormat = DateFormat.yMMMMEEEEd();
   EpisodeText(this.e);
   @override
   Widget build(BuildContext context) {

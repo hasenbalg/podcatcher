@@ -1,79 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:podcatcher/src/bloc/bloc.dart';
 import 'package:podcatcher/src/widgets/delete_podcast_dialog.dart';
-import 'package:podcatcher/src/widgets/img_or_placeholder.dart';
 import 'package:podcatcher/src/widgets/podcast_provider.dart';
 
 import 'episodes_list.dart';
 
 class PodcastPage extends StatelessWidget {
-  final int id;
-  PodcastPage({Key key, this.id}) : super(key: key);
+  final Podcast podcast;
+  PodcastPage({Key key, this.podcast}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Bloc pbloc = BlocProvider.of(context);
     pbloc.fetchPodcasts();
 
-    return StreamBuilder(
-      stream: pbloc.outPodcasts,
-      builder: (BuildContext context, AsyncSnapshot<List<Podcast>> snapshot) {
-        if (snapshot.hasData &&
-            snapshot.data.length > 0 &&
-            !snapshot.hasError) {
-          Podcast podcast = snapshot.data.firstWhere((p) => p.id == this.id);
-          return Scaffold(
-            appBar: AppBar(
-              title: Text(podcast.title),
-            ),
-            body: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  buildInfoSection(context, podcast),
-                ],
-              ),
-            ),
-          );
-        }
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
-    );
-  }
-
-  buildInfoSection(BuildContext context, Podcast podcast) {
-    return Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: ImgOrPlaceholder(path: podcast.imageOffline),
-            ),
-            Expanded(
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    podcast.subtitle,
-                  ),
-                  Text(
-                    podcast.author,
-                  ),
-                ],
-              ),
-            ),
-            IconButton(
-              icon: Icon(Icons.delete_forever),
-              iconSize: 48.0,
-              onPressed: () {
-                _deleteDialog(context, podcast);
-              },
-            ),
-          ],
-        ),
-        EpisodesList(podcastId: podcast.id),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(podcast.title),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.delete_forever),
+            // iconSize: 48.0,
+            onPressed: () {
+              _deleteDialog(context, podcast);
+            },
+          ),
+        ],
+      ),
+      body: EpisodesList(podcastId: podcast.id),
     );
   }
 

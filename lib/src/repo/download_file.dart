@@ -13,9 +13,12 @@ class DownloadFile {
           .last
           .replaceAll(new RegExp(r'\?.+'), ''); //remove all ending
 
-      Client c = new Client();
+      File file = File(join(docDir.path, fileName));
+      if (await file.exists()) {
+        return file.path;
+      }
+      Client c = Client();
       var response = await c.get(online);
-      File file = new File(join(docDir.path, fileName));
       file.create(recursive: true);
       await file.writeAsBytes(response.bodyBytes);
       return file.path;

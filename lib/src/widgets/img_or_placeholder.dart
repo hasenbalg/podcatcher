@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 class ImgOrPlaceholder extends StatelessWidget {
-  String path;
+  final String path;
 
   ImgOrPlaceholder({key, this.path}) : super(key: key);
 

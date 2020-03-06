@@ -1,11 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:podcatcher/src/model/podcast.dart';
 import 'package:podcatcher/src/repo/episode_repo.dart';
 import 'package:podcatcher/src/repo/podcast_repo.dart';
 
-import '../model/episode.dart';
 import '../model/episode.dart';
 
 export 'package:podcatcher/src/model/podcast.dart';

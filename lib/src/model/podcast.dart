@@ -131,7 +131,14 @@ class Podcast {
           .first
           .text;
     } catch (e) {
-      return null;
+      try {
+        return channelNode
+            .findElements('itunes:image')
+            .first
+            .getAttribute('href');
+      } catch (e) {
+        return null;
+      }
     }
   }
 
