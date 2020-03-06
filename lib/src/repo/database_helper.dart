@@ -11,7 +11,7 @@ class DatabaseHelper {
   static final _databaseName = "Podcatcher.db";
   static final _databaseVersion = 1;
 
-    DatabaseHelper._privateConstructor();
+  DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
   static Database _database;
@@ -20,33 +20,34 @@ class DatabaseHelper {
     _database = await _initDatabase();
     return _database;
   }
-  
+
   _initDatabase() async {
     Directory documentsDirectory = await getApplicationDocumentsDirectory();
     String path = join(documentsDirectory.path, _databaseName);
     return await openDatabase(path,
-        version: _databaseVersion,
-        onCreate: _onCreate);
+        version: _databaseVersion, onCreate: _onCreate);
   }
 
   Future _onCreate(Database db, int version) async {
     await db.execute(Podcast.createTable);
     await db.execute(Episode.createTable);
   }
-  
+
   Future<int> insert(Map<String, dynamic> row, String table) async {
     Database db = await instance.database;
-    return await db.insert(table, row, conflictAlgorithm: ConflictAlgorithm.replace);
+    return await db.insert(table, row,
+        conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
-  Future<List<Map<String, dynamic>>> queryAllRows( String table) async {
+  Future<List<Map<String, dynamic>>> queryAllRows(String table) async {
     Database db = await instance.database;
     return await db.query(table);
   }
 
-  Future<int> queryRowCount( String table) async {
+  Future<int> queryRowCount(String table) async {
     Database db = await instance.database;
-    return Sqflite.firstIntValue(await db.rawQuery('SELECT COUNT(*) FROM $table'));
+    return Sqflite.firstIntValue(
+        await db.rawQuery('SELECT COUNT(*) FROM $table'));
   }
 
   Future<int> update(Map<String, dynamic> row, String table) async {
@@ -60,8 +61,18 @@ class DatabaseHelper {
     return await db.delete(table, where: 'id = ?', whereArgs: [id]);
   }
 
-  Future<int> clear( String table) async {
+  Future<int> clear(String table) async {
     Database db = await instance.database;
     return await db.delete(table);
+  }
+
+  Future<List<Map<String, dynamic>>> queryWhereFieldIs(
+      String table, String fieldName, var value) async {
+    Database db = await instance.database;
+    return await db.query(
+      table,
+      where: '$fieldName = ?',
+      whereArgs: ['$value'],
+    );
   }
 }

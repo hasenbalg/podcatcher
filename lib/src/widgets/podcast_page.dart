@@ -4,6 +4,8 @@ import 'package:podcatcher/src/widgets/delete_podcast_dialog.dart';
 import 'package:podcatcher/src/widgets/img_or_placeholder.dart';
 import 'package:podcatcher/src/widgets/podcast_provider.dart';
 
+import 'episodes_list.dart';
+
 class PodcastPage extends StatelessWidget {
   final int id;
   PodcastPage({Key key, this.id}) : super(key: key);
@@ -67,7 +69,8 @@ class PodcastPage extends StatelessWidget {
               },
             ),
           ],
-        )
+        ),
+        EpisodesList(podcastId: podcast.id),
       ],
     );
   }

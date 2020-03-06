@@ -1,4 +1,4 @@
-package com.example.podcatcher
+package org.hasenbalg.podcatcher
 
 import androidx.annotation.NonNull;
 import io.flutter.embedding.android.FlutterActivity

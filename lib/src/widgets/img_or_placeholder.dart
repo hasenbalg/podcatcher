@@ -1,17 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 class ImgOrPlaceholder extends StatelessWidget {
-
   String path;
 
-  ImgOrPlaceholder({key, this.path}):super(key:key);
+  ImgOrPlaceholder({key, this.path}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-     Image img;
+    Image img;
     try {
-      img = Image.asset(
-        path,
+      img = Image.file(
+        File(path),
         fit: BoxFit.cover,
         height: 70,
       );
@@ -24,5 +25,4 @@ class ImgOrPlaceholder extends StatelessWidget {
     }
     return img;
   }
-  
 }
