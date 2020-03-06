@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:http/http.dart';
 import 'package:podcatcher/src/model/podcast.dart';
 
@@ -32,14 +34,28 @@ class EpisodeRepo with DownloadFile {
           orElse: () => null);
       if (oldEpisode == null) {
         e.podcastId = podcast.id;
-        e.imageOnline ??= podcast.imageOnline;
-        e.imageOffline ??= podcast.imageOffline;
-        await DatabaseHelper.instance.insert(e.toDb(), _tableName);
+        // set images if not there
+        if (e.imageOnline == null) {
+          e.imageOnline = podcast.imageOnline;
+          e.imageOffline = podcast.imageOffline;
+        } else {
+          print(e.imageOnline);
+          e.imageOffline = await downloadAndGetPath(e.imageOnline);
+        }
+
+        e.id = await DatabaseHelper.instance.insert(e.toDb(), _tableName);
+        print('adding episode ${e.id}');
       }
     }
   }
 
-  Future<void> delete(int id) async {
-    await DatabaseHelper.instance.delete(id, _tableName);
+  Future<void> delete(Episode e) async {
+    try {
+      //delete file
+      var file = File(e.imageOffline);
+      file.deleteSync();
+    } catch (e) {} finally {
+      await DatabaseHelper.instance.delete(e.id, _tableName);
+    }
   }
 }

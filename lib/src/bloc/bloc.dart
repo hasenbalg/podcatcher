@@ -41,17 +41,10 @@ class Bloc {
   }
 
   Future deletePodcast(Podcast podcast) async {
-    try {
-      //delete file
-      var file = File(podcast.imageOffline);
-      file.deleteSync();
-    } finally {
-      await PodcastRepo().delete(podcast.id);
-      // delete all episodes belonging to this podcast
-      for (Episode e in await EpisodeRepo().fetchAllOfPodcast(podcast.id)) {
-        await EpisodeRepo().delete(e.id);
-        print('deleting ${e.id}');
-      }
+    await PodcastRepo().delete(podcast);
+    // delete all episodes belonging to this podcast
+    for (Episode e in await EpisodeRepo().fetchAllOfPodcast(podcast.id)) {
+      EpisodeRepo().delete(e).then((_) => print('deleting ${e.id}'));
     }
   }
 

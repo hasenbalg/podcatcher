@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:podcatcher/src/model/podcast.dart';
@@ -42,7 +43,7 @@ class PodcastRepo with DownloadFile {
           await DatabaseHelper.instance.insert(newPodcast.toDb(), _tableName);
     }
     print('$newPodcast in database');
-    await EpisodeRepo().updateEpisodesOfPodcast(newPodcast);
+    EpisodeRepo().updateEpisodesOfPodcast(newPodcast);
   }
 
   Future<List<Podcast>> fetchFromDb() async {
@@ -69,7 +70,13 @@ class PodcastRepo with DownloadFile {
     });
   }
 
-  Future delete(int id) async {
-    await DatabaseHelper.instance.delete(id, _tableName);
+  Future delete(Podcast p) async {
+    try {
+      //delete file
+      var file = File(p.imageOffline);
+      file.deleteSync();
+    } catch (e) {} finally {
+      await DatabaseHelper.instance.delete(p.id, _tableName);
+    }
   }
 }

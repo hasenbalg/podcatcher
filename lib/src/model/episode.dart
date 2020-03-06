@@ -74,7 +74,7 @@ class Episode {
     this.title = dbMap['title'];
     this.audioOnline = dbMap['audioOnline'];
     this.audioOffline = dbMap['audioOffline'];
-    this.pubDate = DateTime.fromMicrosecondsSinceEpoch(dbMap['pubDate']);
+    this.pubDate = DateTime.fromMicrosecondsSinceEpoch(dbMap['pubDate'] * 1000);
     this.duration = dbMap['duration'] as int;
     this.isDownloaded = dbMap['isDownloaded'] == 1;
     this.imageOnline = dbMap['imageOnline'];
@@ -109,11 +109,8 @@ class Episode {
         : '';
     this.description = item.findElements('description').first.text;
     this.duration = _findDuration(item);
-    this.audioOnline =
-        item.findElements('enclosure').first.getAttribute('url');
-    this.imageOnline = (item.findElements('img').isNotEmpty)
-        ? item.findElements('img').first.getAttribute('src')
-        : null;
+    this.audioOnline = item.findElements('enclosure').first.getAttribute('url');
+    this.imageOnline = _findImage(item);
   }
 
   _parseDate(String format, String date) {
@@ -129,7 +126,27 @@ class Episode {
     }
   }
 
-    @override
+  String _findImage(xml.XmlElement channelNode) {
+    try {
+      return channelNode
+          .findElements('image')
+          .first
+          .findElements('url')
+          .first
+          .text;
+    } catch (e) {
+      try {
+        return channelNode
+            .findElements('itunes:image')
+            .first
+            .getAttribute('href');
+      } catch (e) {
+        return null;
+      }
+    }
+  }
+
+  @override
   String toString() {
     return '''{
               'id': ${this.id},

@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:podcatcher/src/widgets/episode_text.dart';
 
 import '../model/episode.dart';
+import 'img_or_placeholder.dart';
 import 'img_or_placeholder.dart';
 import 'podcast_provider.dart';
 
@@ -18,7 +22,7 @@ class EpisodePage extends StatelessWidget {
         if (snapshot.hasData &&
             snapshot.data.length > 0 &&
             !snapshot.hasError) {
-          return _someThing2Show(snapshot.data);
+          return _buildEpisodeDetails(snapshot.data, context);
         } else if (snapshot.data?.length == 0) {
           return Center(
             child: Text('No Episodes found'),
@@ -31,12 +35,24 @@ class EpisodePage extends StatelessWidget {
     );
   }
 
-  Widget _someThing2Show(List<Episode> data) {
+  Widget _buildEpisodeDetails(List<Episode> data, BuildContext context) {
     Episode e = data.firstWhere((e) => e.id == id);
-    return ListTile(
-      leading: ImgOrPlaceholder(path: e.imageOffline),
-      title: Text(e.title),
-      subtitle: Text(e.pubDate.toIso8601String()),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(e.title),
+      ),
+      body: Container(
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: ImgOrPlaceholder(
+                path: e.imageOffline,
+              ),
+            ),
+            EpisodeText(e),
+          ],
+        ),
+      ),
     );
   }
 }
